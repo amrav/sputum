@@ -44,16 +44,21 @@ sub Sputum {
 sub _SubPrint {
 
     my $text = shift;
-
+    my $load_keyword;
     $text =~ s{
                      ^[ \t]*pi
                      \s+(\S+)
-                     \s*\n
                     }
          	    {
+                     my $var = $1;
+                     if ( $1 =~ /\d+/ ) {
+                         $load_keyword = "li";
+                     } else {
+                         $load_keyword = "move";
+                     }
                      "li \$v0, 1\n".
-                     "li \$a0, $1\n".
-                     "syscall\n"
+                     "$load_keyword \$a0, $var\n".
+                     "syscall"
                     }gmxe;
     return $text;
 }

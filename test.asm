@@ -4,3 +4,5 @@ addi value, value, 1
 move return, value
 
 pi return
+
+pi 8
