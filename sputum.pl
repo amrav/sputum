@@ -62,14 +62,16 @@ sub _LoadVars {
     # Int definitions are of the form: ^int [vars ...]
     # Each int variable gets its own $t{n} register.
     while ($text =~ s{
-                         (^[ \t]*int       # line should begin with int
-                          (?:[ \t]+\S+)+   # match spaces followed by words
-                          [ \t]*$                # match end of line
+                         (^\s*int       # line should begin with int
+                          (?:[\s,]+\S+)+?   # match spaces or commas followed by words
+                          \s*$                # match end of line
                          )                 # save each 'int [vars...]' line in $1
                      }
         	     {}mx) {
+#	print '$1 is: ', $1;
 	_IntsToRegisters($1);
     }
+
     while ( (my $var, my $reg) = each %int_register) {
 	$text =~ s/\b$var\b/$reg/g
     }
@@ -79,7 +81,7 @@ sub _LoadVars {
 sub _IntsToRegisters {
 
     my $text = shift;
-    my @vars = split " ", $text;
+    my @vars = split /[\s,]+/, $text;
     shift @vars;
     foreach (@vars) {
 	$int_register{$_} = "\$t$free_int_register";
