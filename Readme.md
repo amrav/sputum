@@ -25,12 +25,12 @@ outputs
 `pi` prints integers.
 
     var i
-    li i 0
+    li i, 0
     pi i
 
 outputs
 
-    li $t0 0
-    li $v0 1
-    li $a0 $t0
+    li $t0, 0
+    li $v0, 1
+    li $a0, $t0
     syscall
