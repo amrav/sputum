@@ -22,15 +22,19 @@ outputs
 
 ### Output
 
-`pi` prints integers.
+`pi` prints integers. Feel free to use it with numbers too.
 
     var i
     li i, 0
     pi i
+    pi 8
 
 outputs
 
     li $t0, 0
     li $v0, 1
-    li $a0, $t0
+    move $a0, $t0
+    syscall
+    li $v0, 1
+    li $a0, 8
     syscall
