@@ -17,7 +17,7 @@ my $text;
     $text = <>;
 }
 
-print Sputum($text);
+print Sputum($text) . "\n";
 
 sub Sputum {
     
@@ -34,24 +34,31 @@ sub Sputum {
     # Strip any lines consisting only of spaces and tabs.
     $text =~ s/^[ \t]+$//mg;
 
-    $text = _LoadVars($text);
+    $text = _SubPrint($text);
+    $text = _SubVars($text);
 
     return $text;
 }
 
 
-sub _Detab {
-#
-# Cribbed from a post by Bart Lateur:
-# <http://www.nntp.perl.org/group/perl.macperl.anyperl/154>
-#
+sub _SubPrint {
+
     my $text = shift;
-    my $tab_width = 4;
-    $text =~ s{(.*?)\t}{$1.(' ' x ($tab_width - length($1) % $tab_width))}ge;
+
+    $text =~ s{
+                     ^[ \t]*pi
+                     \s+(\S+)
+                     \s*\n
+                    }
+         	    {
+                     "li \$v0, 1\n".
+                     "li \$a0, $1\n".
+                     "syscall\n"
+                    }gmxe;
     return $text;
 }
-
-sub _LoadVars {
+    
+sub _SubVars {
 #
 # Strip variable definitions from text, and store variables and
 # corresponding registers in hash references.
@@ -59,10 +66,10 @@ sub _LoadVars {
 
     my $text = shift;
 
-    # Int definitions are of the form: ^int [vars ...]
-    # Each int variable gets its own $t{n} register.
+    # Var definitions are of the form: ^var [vars ...]
+    # Each var gets its own $t{n} register.
     while ($text =~ s{
-                         (^\s*int       # line should begin with int
+                         (^[ \t]*var       # line should begin with int
                           (?:[\s,]+\S+)+?   # match spaces or commas followed by words
                           \s*\n                # match end of line
                          )                 # save each 'int [vars...]' line in $1
