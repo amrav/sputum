@@ -64,7 +64,7 @@ sub _LoadVars {
     while ($text =~ s{
                          (^\s*int       # line should begin with int
                           (?:[\s,]+\S+)+?   # match spaces or commas followed by words
-                          \s*$                # match end of line
+                          \s*\n                # match end of line
                          )                 # save each 'int [vars...]' line in $1
                      }
         	     {}mx) {
