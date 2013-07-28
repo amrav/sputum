@@ -13,17 +13,23 @@ $ ./sputum.pl file > output
 Integers can be declared with the `int` keyword. Every new integer occupies a new `$t{n}` register.
 
 ```asm
-int i, j, sum
-li i, 0
-li j, 2
-add sum, i, j
+.data
+	int i, j, sum
+
+.text
+	li i, 0
+	li j, 2
+	add sum, i, j
 ```
 outputs
 
 ```asm
-li $t0, 0
-li $t1, 2
-add $t3, $t0, $t1
+.data
+
+.text
+	li $t0, 0
+	li $t1, 2
+	add $t3, $t0, $t1
 ```
 
 ### Output
@@ -33,10 +39,10 @@ add $t3, $t0, $t1
 ```asm
 .data
 	prompt: .asciiz "Hello, world!\n"
-
+	int i
+	
 .text
 main:
-	int i
 	li i, 0
 
 	print prompt
