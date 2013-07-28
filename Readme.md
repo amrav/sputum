@@ -32,7 +32,7 @@ outputs
 ```
 ### I/O
 
-'scan` scans anything. Well, almost. And you'll never guess what `print` does.
+`scan` scans anything. Well, almost. And you'll never guess what `print` does.
 
 ```asm
 .data
