@@ -1,10 +1,13 @@
 # Sputum
-Spits MIPS. Run it like this:
+Spits MIPS assembly. Run it like this:
 
 ```bash
 $ ./sputum.pl file > output
 ```
-
+### Features
+1. Sputum is a dumb text preprocessor. It is almost certainly not a compiler, but I'm not sure yet.
+2. Sputum is a superset of MIPS assembly. You can freely mix both.
+3. Sputum tries to preserve your indentation, and doesn't touch comments. 
 
 ## Usage
 
