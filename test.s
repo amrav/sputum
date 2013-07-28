@@ -9,3 +9,5 @@ main:
 	move return, value
 
 	print return, 8, prompt
+
+	scan return

@@ -19,7 +19,7 @@ my $text;
     $text = <>;
 }
 
-print Sputum($text) . "\n";
+print Sputum($text) . "\n\n";
 
 sub Sputum {
 
@@ -38,6 +38,7 @@ sub Sputum {
 
     $text = _LoadData($text);
     $text = _SubPrint($text);
+    $text = _SubScan($text);
     $text = _SubVars($text);
 
     return $text;
@@ -60,6 +61,36 @@ sub _LoadData {
     return $text;
 }
 
+sub _SubScan {
+    my $text = shift;
+    $text =~ s/^([ \t]*)(scan\s.*?)\n/_GetScans($2, $1);/gme;
+    return $text;
+}
+
+sub _GetScans {
+    my @vars = split /[\s,]+/, shift;
+    shift @vars;
+    my $indent = shift;
+    my $scans;
+
+    my ($v, $load);
+    foreach ( @vars ) {
+	if ( defined $int_register{$_} ) {
+	    $scans = $scans . _Scan(5, $_, "move", $indent);
+	}
+	$scans = $scans . "\n"
+    }
+    chomp $scans;
+    return $scans;
+}
+
+sub _Scan {
+    my ($v, $var, $load, $indent) = @_;
+    my $text = "${indent}li \$v0, $v\n" .
+	"${indent}syscall\n" .
+	"${indent}$load $var, \$v0";
+}
+
 sub _SubPrint {
 
     my $text = shift;
@@ -68,12 +99,13 @@ sub _SubPrint {
 }
 
 sub _GetPrints {
-    my @vars = split /[\s,]+/, shift ;
-    shift @vars;
-    my $indent = shift;
-    my $prints;
 
-    my $v; my $load;
+    my ($vars, $indent) = @_;
+    my @vars = split /[\s,]+/, $vars;
+    shift @vars;
+
+    my ($v, $load, $prints);
+    
     foreach ( @vars ) {
 	if ( defined $data{$_} ) {
 	    if ( $data{$_} =~ "ascii" ) {
@@ -96,14 +128,10 @@ sub _GetPrints {
 }
 
 sub _Print {
-    my $v = shift;
-    my $load = shift;
-    my $var = shift;
-    my $indent = shift;
+    my ($v, $load, $var, $indent) = @_;
     my $prints = "${indent}li \$v0, $v\n" .
 	"${indent}$load \$a0, $var\n" .
 	"${indent}syscall\n";
-    $prints;
 }
 
 sub _LoadVars {
@@ -141,5 +169,3 @@ sub _SubVars {
 
     return $text;
 }
-
-

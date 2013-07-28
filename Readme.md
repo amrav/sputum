@@ -22,7 +22,6 @@ Integers can be declared with the `int` keyword. Every new integer occupies a ne
 	add sum, i, j
 ```
 outputs
-
 ```asm
 .data
 
@@ -31,10 +30,9 @@ outputs
 	li $t1, 2
 	add $t3, $t0, $t1
 ```
+### I/O
 
-### Output
-
-`print` prints anything. Well, almost. Add your own newlines.
+'scan` scans anything. Well, almost. And you'll never guess what `print` does.
 
 ```asm
 .data
@@ -43,21 +41,19 @@ outputs
 	
 .text
 main:
-	li i, 0
-
-	print prompt
-
-	print i, 8
+	scan i
+	print prompt, i
 ```
 outputs
-
 ```asm
 .data
 	prompt: .asciiz "Hello, world!\n"
 
 .text
 main:
-	li $t0, 0
+	li $v0, 5
+	syscall
+	move $t0, $v0
 
 	li $v0, 4
 	la $a0, prompt
@@ -65,9 +61,5 @@ main:
 
 	li $v0, 1
 	move $a0, $t0
-	syscall
-
-	li $v0, 1
-	li $a0, 8
 	syscall
 ```
