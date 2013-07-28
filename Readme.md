@@ -10,10 +10,10 @@ $ ./sputum.pl file > output
 
 ### Variables
 
-Variables can be declared with the `var` keyword. Every new variable occupies a new `$t{n}` register.
+Integers can be declared with the `int` keyword. Every new integer occupies a new `$t{n}` register.
 
 ```asm
-var i, j, sum
+int i, j, sum
 li i, 0
 li j, 2
 add sum, i, j
@@ -36,7 +36,7 @@ add $t3, $t0, $t1
 
 .text
 main:
-	var i
+	int i
 	li i, 0
 
 	print prompt

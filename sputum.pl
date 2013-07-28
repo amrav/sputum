@@ -5,8 +5,8 @@ use strict;
 use warnings;
 
 # global hashes
-my %var_register;
-my $free_var_register = 0;
+my %int_register;
+my $free_int_register = 0;
 
 my %data;
 
@@ -70,7 +70,7 @@ sub _GetPrints {
     my $v; my $load;
     foreach ( @vars ) {
 	if ( defined $data{$_} ) {
-	    if ( $data{$_} eq "asciiz" ) {
+	    if ( $data{$_} =~ "ascii" ) {
 		$prints = $prints . _Print(4, "la", $_, $indent);
 	    }
 	}
@@ -110,10 +110,10 @@ sub _SubVars {
 
     # Var definitions are of the form: ^var [vars ...]
     # Each var gets its own $t{n} register.
-    $text =~ s/^[ \t]*var (.*?\n)/_IntsToRegisters($1)/mge; 
+    $text =~ s/^[ \t]*int (.*?\n)/_IntsToRegisters($1)/mge; 
 
-    while ( (my $var, my $reg) = each %var_register) {
-	$text =~ s/\b$var\b/$reg/g
+    while ( my($int, $reg) = each %int_register) {
+	$text =~ s/\b$int\b/$reg/g
     }
 
     return $text;
@@ -121,9 +121,9 @@ sub _SubVars {
 
 sub _IntsToRegisters {
 
-    my @vars = split /[\s,]+/, shift;
-    foreach (@vars) {
-	$var_register{$_} = "\$t$free_var_register";
-	$free_var_register++;
+    my @ints = split /[\s,]+/, shift;
+    foreach (@ints) {
+	$int_register{$_} = "\$t$free_int_register";
+	$free_int_register++;
     }
 }
