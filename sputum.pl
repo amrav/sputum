@@ -36,22 +36,28 @@ sub Sputum {
     # Strip any lines consisting only of spaces and tabs.
     $text =~ s/^[ \t]+$//mg;
 
-    _LoadData($text);
+    $text = _LoadData($text);
     $text = _SubPrint($text);
     $text = _SubVars($text);
 
     return $text;
+
 }
 
 sub _LoadData {
     my $text = shift;
     $text =~ /\.data\s*?(.*?\n)\s*\.text/s;
-    my @data = split /\s*\n/, $1;
+    my @data = split /\s*\n/, $1;    
     foreach ( @data ) {
 	if ( $_ =~ /[ \t]*(\S+?):[ \t]+\.(\S+)/ ) {
 	    $data{$1} = $2;
 	}
+	else {
+	    _LoadVars($_);
+	}
     }
+    $text =~ s/^[ \t]*(int|float).*?\n//mg;
+    return $text;
 }
 
 sub _SubPrint {
@@ -94,10 +100,32 @@ sub _Print {
     my $load = shift;
     my $var = shift;
     my $indent = shift;
-    my $return = "${indent}li \$v0, $v\n" .
+    my $prints = "${indent}li \$v0, $v\n" .
 	"${indent}$load \$a0, $var\n" .
 	"${indent}syscall\n";
-    $return;
+    $prints;
+}
+
+sub _LoadVars {
+    
+    my $text = shift;
+
+    # Var definitions are of the form: ^var [vars ...]
+    # Each var gets its own $t{n} register.
+    $text =~ s/^[ \t]*(\S+) (.*?)$/_VarsToRegisters($1, $2)/ge; 
+}
+
+
+sub _VarsToRegisters {
+
+    my $data_type = shift;
+    my @vars = split /[\s,]+/, shift;
+    foreach (@vars) {
+	if ($data_type eq 'int') {
+	    $int_register{$_} = "\$t$free_int_register";
+	    $free_int_register++;
+	}
+    }
 }
 
 sub _SubVars {
@@ -105,13 +133,8 @@ sub _SubVars {
 # Strip variable definitions from text, and store variables and
 # corresponding registers in hash references.
 #
-
     my $text = shift;
-
-    # Var definitions are of the form: ^var [vars ...]
-    # Each var gets its own $t{n} register.
-    $text =~ s/^[ \t]*int (.*?\n)/_IntsToRegisters($1)/mge; 
-
+    
     while ( my($int, $reg) = each %int_register) {
 	$text =~ s/\b$int\b/$reg/g
     }
@@ -119,11 +142,4 @@ sub _SubVars {
     return $text;
 }
 
-sub _IntsToRegisters {
 
-    my @ints = split /[\s,]+/, shift;
-    foreach (@ints) {
-	$int_register{$_} = "\$t$free_int_register";
-	$free_int_register++;
-    }
-}
