@@ -22,19 +22,37 @@ outputs
 
 ### Output
 
-`pi` prints integers. Feel free to use it with numbers too.
+`print` prints anything. Well, almost. Add your own newlines if you need them.
 
-    var i
-    li i, 0
-    pi i
-    pi 8
+    .data
+	prompt: .asciiz "Hello, world!\n"
+	
+    .text
+    main:
+        var i
+    	li i, 0
+
+	print prompt
+
+	print i, 8
 
 outputs
 
-    li $t0, 0
-    li $v0, 1
-    move $a0, $t0
-    syscall
-    li $v0, 1
-    li $a0, 8
-    syscall
+    .data
+	prompt: .asciiz "Hello, world!\n"
+	
+    .text
+    main:
+	li $t0, 0
+
+	li $v0, 4
+	la $a0, prompt
+	syscall
+	
+	li $v0, 1
+	move $a0, $t0
+	syscall
+
+	li $v0, 1
+	li $a0, 8
+	syscall

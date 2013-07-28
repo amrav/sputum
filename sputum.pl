@@ -83,7 +83,9 @@ sub _GetPrints {
 	elsif ( $_ =~ /"(\S+)"/ ) {
 	    $prints = $prints . _Print(4, "la", $1, $indent);
 	}
+	$prints = $prints . "\n";
     }
+    chomp $prints;
     return $prints;
 }
 
@@ -94,7 +96,7 @@ sub _Print {
     my $indent = shift;
     my $return = "${indent}li \$v0, $v\n" .
 	"${indent}$load \$a0, $var\n" .
-	"${indent}syscall\n\n";
+	"${indent}syscall\n";
     $return;
 }
 
